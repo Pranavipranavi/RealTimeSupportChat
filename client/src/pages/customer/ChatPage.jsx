@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { FileText, LockKeyhole, Paperclip, Search, Send, Smile, Sparkles, Star } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { FileText, LockKeyhole, Paperclip, Search, Send, Smile, Sparkles, Star, X } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, assetUrl } from "../../api/client.js";
@@ -73,6 +73,122 @@ const MessageBubble = memo(function MessageBubble({ message, currentUserId, onRe
   );
 });
 
+function AiAssistantDrawer({ conversation, isOpen, isRefreshing, onClose, onRefreshSummary, onInsertSuggestion, onSendSuggestion }) {
+  const suggestions = Array.isArray(conversation?.suggestedReplies) ? conversation.suggestedReplies : [];
+  const hasSummary = Boolean(conversation?.summary);
+  const hasSignals = Boolean(conversation?.aiSignals?.reason || conversation?.aiSignals?.sentiment || conversation?.aiSignals?.urgencyScore);
+
+  return (
+    <AnimatePresence>
+      {isOpen ? (
+        <div className="fixed inset-0 z-50">
+          <motion.button
+            type="button"
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
+            aria-label="Close AI suggestions"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
+          <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ai-suggestions-title"
+            className="absolute bottom-0 right-0 top-auto flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-dark-card sm:bottom-4 sm:right-4 sm:top-4 sm:max-h-none sm:w-[420px] sm:rounded-lg"
+            initial={{ opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 28 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
+            <div className="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 p-4 dark:border-slate-800">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-primary">SupaNova AI</p>
+                <h3 id="ai-suggestions-title" className="mt-1 text-lg font-black text-slate-950 dark:text-white">AI Suggestions</h3>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Local insights for this conversation.</p>
+              </div>
+              <button type="button" className="focus-ring rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" onClick={onClose} aria-label="Close AI suggestions">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="scrollbar-soft min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+              <section className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/70">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-black text-slate-950 dark:text-white">Summary</h4>
+                    <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                      {hasSummary ? conversation.summary : "No AI summary is available yet."}
+                    </p>
+                  </div>
+                </div>
+                <Button className="mt-3 w-full" variant="secondary" icon={Sparkles} isLoading={isRefreshing} onClick={onRefreshSummary}>
+                  Refresh summary
+                </Button>
+              </section>
+
+              <section className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
+                <h4 className="text-sm font-black text-slate-950 dark:text-white">Classification</h4>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {conversation?.category ? <StatusBadge value={conversation.category} /> : null}
+                  {conversation?.priority ? <StatusBadge value={conversation.priority} /> : null}
+                  {conversation?.aiSignals?.sentiment ? <StatusBadge value={conversation.aiSignals.sentiment} /> : null}
+                </div>
+                {hasSignals ? (
+                  <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                    {conversation.aiSignals?.urgencyScore !== undefined ? <p><span className="font-bold">Urgency:</span> {conversation.aiSignals.urgencyScore}</p> : null}
+                    {conversation.aiSignals?.reason ? <p>{conversation.aiSignals.reason}</p> : null}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">No AI classification details are available yet.</p>
+                )}
+              </section>
+
+              <section className="rounded-lg border border-blue-200 bg-blue-50/70 p-4 dark:border-blue-500/20 dark:bg-blue-500/10">
+                <h4 className="text-sm font-black text-slate-950 dark:text-white">Suggested replies</h4>
+                {suggestions.length ? (
+                  <div className="mt-3 grid gap-2">
+                    {suggestions.map((reply) => (
+                      <div
+                        key={reply}
+                        className="flex items-stretch overflow-hidden rounded-lg border border-blue-200 bg-white text-sm font-semibold text-blue-700 dark:border-blue-500/30 dark:bg-slate-950 dark:text-blue-300"
+                      >
+                        <button
+                          type="button"
+                          className="min-w-0 flex-1 px-3 py-2 text-left transition hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                          onClick={() => {
+                            onInsertSuggestion(reply);
+                            onClose();
+                          }}
+                        >
+                          <span className="line-clamp-3">{reply}</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="flex w-12 shrink-0 items-center justify-center border-l border-blue-100 transition hover:bg-blue-50 dark:border-blue-500/20 dark:hover:bg-blue-500/10"
+                          onClick={() => {
+                            onSendSuggestion(reply);
+                            onClose();
+                          }}
+                          aria-label="Send suggested reply"
+                        >
+                          <Send className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">No suggested replies are available yet.</p>
+                )}
+              </section>
+            </div>
+          </motion.aside>
+        </div>
+      ) : null}
+    </AnimatePresence>
+  );
+}
+
 export function ChatPage() {
   const { conversationId } = useParams();
   const navigate = useNavigate();
@@ -89,6 +205,7 @@ export function ChatPage() {
   const [typingUsers, setTypingUsers] = useState([]);
   const [ratingFeedback, setRatingFeedback] = useState("");
   const [hasUnreadWhileReading, setHasUnreadWhileReading] = useState(false);
+  const [showAiAssistant, setShowAiAssistant] = useState(false);
   const messageListRef = useRef(null);
   const composerRef = useRef(null);
   const isNearBottomRef = useRef(true);
@@ -161,6 +278,10 @@ export function ChatPage() {
       realtime.leave(selectedId);
     };
   }, [selectedId, realtime.isConnected, realtime.join, realtime.leave, realtime.markRead, realtime.typingStop]);
+
+  useEffect(() => {
+    setShowAiAssistant(false);
+  }, [selectedId]);
 
   useEffect(() => {
     if (!realtime.socket) return undefined;
@@ -426,32 +547,9 @@ export function ChatPage() {
                     </select>
                   ) : null}
                   {!canModifyTicket && isAdminRole(user?.role) ? <LockedModifyNotice /> : null}
-                  <Button variant="secondary" icon={Sparkles} isLoading={summaryMutation.isPending} onClick={() => summaryMutation.mutate()}>Summary</Button>
+                  <Button variant="secondary" icon={Sparkles} onClick={() => setShowAiAssistant(true)}>AI Suggestions</Button>
                 </div>
               </div>
-              {conversation.aiSignals?.reason || conversation.suggestedReplies?.length ? (
-                <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50/70 p-3 dark:border-blue-500/20 dark:bg-blue-500/10">
-                  <p className="text-xs font-bold uppercase tracking-wide text-primary">SupaNova AI Assist</p>
-                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{conversation.summary || conversation.aiSignals?.reason || "Local AI is ready to assist this ticket."}</p>
-                  {conversation.suggestedReplies?.length ? (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {conversation.suggestedReplies.map((reply) => (
-                        <div
-                          key={reply}
-                          className="flex max-w-full items-center overflow-hidden rounded-lg border border-blue-200 bg-white text-xs font-semibold text-blue-700 dark:border-blue-500/30 dark:bg-slate-950 dark:text-blue-300"
-                        >
-                          <button type="button" className="min-w-0 flex-1 px-3 py-1.5 text-left hover:bg-blue-50 dark:hover:bg-blue-500/10" onClick={() => useSuggestion(reply)}>
-                            <span className="line-clamp-2">{reply}</span>
-                          </button>
-                          <button type="button" className="border-l border-blue-100 px-2 py-1.5 hover:bg-blue-50 dark:border-blue-500/20 dark:hover:bg-blue-500/10" onClick={() => sendTextMessage(reply)} aria-label="Send suggested reply">
-                            <Send className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
               <div className="mt-3 grid gap-2 md:grid-cols-[1fr_auto]">
                 <Input placeholder="Search messages" value={messageQ} onChange={(event) => setMessageQ(event.target.value)} />
                 {messageSearchQuery.data?.messages?.length ? (
@@ -540,6 +638,16 @@ export function ChatPage() {
                 <Button className="h-11 w-11 px-0" isLoading={uploadMutation.isPending} disabled={!selectedId || (!files.length && !realtime.isConnected)} aria-label="Send"><Send className="h-4 w-4" /></Button>
               </div>
             </form>
+
+            <AiAssistantDrawer
+              conversation={conversation}
+              isOpen={showAiAssistant}
+              isRefreshing={summaryMutation.isPending}
+              onClose={() => setShowAiAssistant(false)}
+              onRefreshSummary={() => summaryMutation.mutate()}
+              onInsertSuggestion={useSuggestion}
+              onSendSuggestion={sendTextMessage}
+            />
           </>
         ) : null}
       </section>
