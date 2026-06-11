@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "../config/env.js";
 import jwt from "jsonwebtoken";
 
 export function signToken(user) {

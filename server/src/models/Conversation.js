@@ -12,11 +12,17 @@ const conversationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["open", "pending", "resolved", "closed"],
+      enum: ["open", "assigned", "in_progress", "waiting_for_customer", "resolved", "closed"],
       default: "open"
     },
     priority: { type: String, enum: ["low", "normal", "high", "urgent"], default: "normal" },
     summary: { type: String, default: "" },
+    suggestedReplies: [{ type: String, maxlength: 500 }],
+    aiSignals: {
+      sentiment: { type: String, enum: ["positive", "neutral", "negative"], default: "neutral" },
+      urgencyScore: { type: Number, default: 0 },
+      reason: { type: String, default: "" }
+    },
     firstResponseAt: { type: Date, default: null },
     lastMessageAt: { type: Date, default: Date.now },
     closedAt: { type: Date, default: null }

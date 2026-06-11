@@ -1,4 +1,4 @@
-# SupportFlow AI API
+# SupaNova AI API
 
 Base URL: `http://localhost:5000`
 
@@ -94,7 +94,7 @@ Customers see their conversations. Agents see assigned conversations. Admins see
 }
 ```
 
-`category` is optional. If omitted, SupportFlow AI categorizes the conversation locally.
+`category` is optional. If omitted, SupaNova AI categorizes the ticket locally.
 
 ### `GET /api/conversations/:id`
 
@@ -110,7 +110,7 @@ Agent/admin only.
 }
 ```
 
-Valid statuses: `open`, `pending`, `resolved`, `closed`.
+Valid statuses: `open`, `assigned`, `in_progress`, `waiting_for_customer`, `resolved`, `closed`.
 
 ### `POST /api/conversations/:id/summary`
 

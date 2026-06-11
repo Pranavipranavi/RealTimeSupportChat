@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { api } from "../../api/client.js";
 import { Button } from "../../components/ui/Button.jsx";
 import { Card, CardHeader } from "../../components/ui/Card.jsx";
+import { PresenceBadge } from "../../components/ui/PresenceBadge.jsx";
 import { EmptyState, ErrorState, SkeletonList } from "../../components/ui/State.jsx";
 import { StatusBadge } from "../../components/ui/StatusBadge.jsx";
 import { Input, Textarea } from "../../components/ui/Input.jsx";
@@ -61,8 +62,8 @@ export function CustomerDashboard() {
 
       <Card>
         <CardHeader
-          title="Conversation history"
-          eyebrow="Live support"
+          title="My Tickets"
+          eyebrow="Ticket center"
           action={<div className="relative w-full sm:w-64"><Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><Input className="pl-9" placeholder="Search" value={q} onChange={(event) => setQ(event.target.value)} /></div>}
         />
         {conversationsQuery.isLoading ? <SkeletonList /> : null}
@@ -76,12 +77,18 @@ export function CustomerDashboard() {
               <Link to={`/customer/chat/${conversation._id}`} className="block p-5 transition hover:bg-slate-50 dark:hover:bg-slate-900/70">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="font-black text-slate-950 dark:text-white">{conversation.subject}</h3>
-                  <div className="flex gap-2"><StatusBadge value={conversation.status} /><StatusBadge value={conversation.category} /></div>
+                  <div className="flex flex-wrap gap-2">
+                    <StatusBadge value={conversation.status} />
+                    <StatusBadge value={conversation.priority} />
+                    {conversation.unreadCount ? <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-black text-white">{conversation.unreadCount} unread</span> : null}
+                  </div>
                 </div>
-                <p className="mt-2 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">{conversation.summary || "SupportFlow is building a summary as your conversation develops."}</p>
-                <div className="mt-3 flex items-center justify-between text-xs font-semibold text-slate-400">
-                  <span>{conversation.assignedAgent?.name || "Assignment pending"}</span>
-                  <span>{formatDate(conversation.lastMessageAt)}</span>
+                <p className="mt-2 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">{conversation.lastMessagePreview || conversation.summary || "SupaNova AI is building a summary as your ticket develops."}</p>
+                <div className="mt-3 grid gap-2 text-xs font-semibold text-slate-400 sm:grid-cols-2">
+                  <span className="flex items-center gap-2">Agent: {conversation.assignedAgent?.name || "Assignment pending"}{conversation.assignedAgent ? <PresenceBadge status={conversation.assignedAgent.status} /> : null}</span>
+                  <span>Category: {conversation.category}</span>
+                  <span>Created: {formatDate(conversation.createdAt)}</span>
+                  <span>Updated: {formatDate(conversation.lastMessageAt)}</span>
                 </div>
               </Link>
             </motion.div>

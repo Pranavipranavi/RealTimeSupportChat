@@ -1,14 +1,17 @@
 import Conversation from "../models/Conversation.js";
+import { isAdminRole } from "./roles.js";
 
 export function canAccessConversation(conversation, user) {
   const userId = String(user._id);
-  return user.role === "admin"
+  if (user.role === "agent" && user.approvalStatus !== "approved") return false;
+  return isAdminRole(user)
     || String(conversation.assignedAgent?._id || conversation.assignedAgent) === userId
     || conversation.participants.some((participant) => String(participant._id || participant) === userId);
 }
 
 export function canManageConversation(conversation, user) {
-  if (user.role === "admin") return true;
+  if (isAdminRole(user)) return true;
+  if (user.role === "agent" && user.approvalStatus !== "approved") return false;
   return user.role === "agent" && String(conversation.assignedAgent?._id || conversation.assignedAgent) === String(user._id);
 }
 

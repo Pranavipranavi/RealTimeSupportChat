@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef } from "react";
 import { BarChart3, Bot, LayoutDashboard, LogOut, Menu, MessageSquare, Moon, Settings, Shield, Sun, Ticket, UserCog, Users, X } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { api } from "../../api/client.js";
@@ -8,6 +9,9 @@ import { useUiStore } from "../../store/uiStore.js";
 import { useSocket } from "../../hooks/useSocket.js";
 import { Button } from "../ui/Button.jsx";
 import { NotificationCenter } from "./NotificationCenter.jsx";
+import { isAdminRole, PRODUCT_NAME, roleLabel } from "../../utils/product.js";
+import { PageLoader } from "../ui/State.jsx";
+import { StatusBadge } from "../ui/StatusBadge.jsx";
 
 const navByRole = {
   customer: [
@@ -33,7 +37,12 @@ function Sidebar({ onNavigate }) {
   const user = useAuthStore((state) => state.user);
   const clearSession = useAuthStore((state) => state.clearSession);
   const navigate = useNavigate();
-  const items = navByRole[user?.role] || navByRole.customer;
+  const items = user?.role === "agent" && user?.approvalStatus !== "approved"
+    ? [
+        { to: "/agent-pending", label: "Approval Status", icon: Shield },
+        { to: "/profile", label: "Profile", icon: Settings }
+      ]
+    : isAdminRole(user?.role) ? navByRole.admin : navByRole[user?.role] || navByRole.customer;
 
   async function logout() {
     try {
@@ -52,8 +61,8 @@ function Sidebar({ onNavigate }) {
           <Bot className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-sm font-black text-slate-950 dark:text-white">SupportFlow AI</p>
-          <p className="text-xs capitalize text-slate-500 dark:text-slate-400">{user?.role || "workspace"}</p>
+          <p className="text-sm font-black text-slate-950 dark:text-white">{PRODUCT_NAME}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{roleLabel(user?.role || "workspace")}</p>
         </div>
       </div>
       <nav className="mt-6 space-y-1">
@@ -75,7 +84,10 @@ function Sidebar({ onNavigate }) {
           <img className="h-9 w-9 rounded-full bg-slate-200 object-cover" src={user?.avatar || `https://api.dicebear.com/8.x/initials/svg?seed=${encodeURIComponent(user?.name || "SF")}`} alt="" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold text-slate-950 dark:text-white">{user?.name}</p>
-            <p className="truncate text-xs text-slate-500 dark:text-slate-400">{user?.email}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+              <StatusBadge value={user?.role} />
+            </div>
+            <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">{user?.email}</p>
           </div>
         </div>
         <Button className="mt-3 w-full" variant="ghost" icon={LogOut} onClick={logout}>Logout</Button>
@@ -88,22 +100,56 @@ export function ThemeToggle() {
   const theme = useUiStore((state) => state.theme);
   const toggleTheme = useUiStore((state) => state.toggleTheme);
   return (
-    <Button variant="secondary" className="h-10 w-10 px-0" onClick={toggleTheme} aria-label="Toggle theme">
-      {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+    <Button variant="secondary" className="h-12 w-12 px-0" onClick={toggleTheme} aria-label="Toggle theme">
+      {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </Button>
   );
 }
 
 function GlobalRealtime() {
   const queryClient = useQueryClient();
-  useSocket({
-    onNotification: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
-    onConversationUpdate: () => {
-      queryClient.invalidateQueries({ queryKey: ["chat-conversations"] });
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
-    }
+  const awayRef = useRef(false);
+  const handleNotification = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    queryClient.invalidateQueries({ queryKey: ["chat-conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["agent-conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+  }, [queryClient]);
+  const handleConversationUpdate = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["chat-conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["agent-conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+  }, [queryClient]);
+  const realtime = useSocket({
+    onNotification: handleNotification,
+    onConversationUpdate: handleConversationUpdate
   });
+  useEffect(() => {
+    if (!realtime.isConnected) return undefined;
+    let timer;
+    const markActive = () => {
+      window.clearTimeout(timer);
+      if (awayRef.current) {
+        realtime.setPresence("online");
+        awayRef.current = false;
+      }
+      timer = window.setTimeout(() => {
+        awayRef.current = true;
+        realtime.setPresence("away");
+      }, 5 * 60 * 1000);
+    };
+    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    events.forEach((event) => window.addEventListener(event, markActive, { passive: true }));
+    markActive();
+    return () => {
+      window.clearTimeout(timer);
+      events.forEach((event) => window.removeEventListener(event, markActive));
+    };
+  }, [realtime.isConnected, realtime.setPresence]);
   return null;
 }
 
@@ -112,8 +158,10 @@ export function AppShell() {
   const setSidebarOpen = useUiStore((state) => state.setSidebarOpen);
   const user = useAuthStore((state) => state.user);
 
+  if (!user) return <PageLoader />;
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-dark-bg dark:text-white">
+    <div className="h-screen overflow-hidden bg-slate-50 text-slate-950 dark:bg-dark-bg dark:text-white">
       <GlobalRealtime />
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex">
         <Sidebar />
@@ -128,15 +176,15 @@ export function AppShell() {
           </motion.div>
         ) : null}
       </AnimatePresence>
-      <div className="lg:pl-72">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/80 px-4 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/75 sm:px-6">
+      <div className="flex h-screen min-h-0 flex-col lg:pl-72">
+        <header className="z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white/80 px-4 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/75 sm:px-6">
           <div className="flex items-center gap-3">
             <Button className="h-10 w-10 px-0 lg:hidden" variant="secondary" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
               {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </Button>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Workspace</p>
-              <h1 className="text-base font-black text-slate-950 dark:text-white sm:text-lg">{user?.name ? `${user.name}'s SupportFlow` : "SupportFlow AI"}</h1>
+              <h1 className="text-base font-black text-slate-950 dark:text-white sm:text-lg">{user?.name ? `${user.name}'s SupaNova` : PRODUCT_NAME}</h1>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -144,7 +192,7 @@ export function AppShell() {
             <ThemeToggle />
           </div>
         </header>
-        <main className="p-4 sm:p-6">
+        <main className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
           <Outlet />
         </main>
       </div>

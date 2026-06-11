@@ -3,6 +3,7 @@ import { ArrowRight, BarChart3, Bot, CheckCircle2, MessageSquareText, ShieldChec
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/Button.jsx";
 import { ThemeToggle } from "../components/layout/AppShell.jsx";
+import { PRODUCT_NAME } from "../utils/product.js";
 
 const features = [
   ["Real-time inbox", "Socket.io conversations, typing states, read receipts, reactions, and presence.", MessageSquareText],
@@ -18,7 +19,7 @@ export function LandingPage() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link to="/" className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-white shadow-glow"><Bot className="h-5 w-5" /></span>
-            <span className="font-black">SupportFlow AI</span>
+            <span className="font-black">{PRODUCT_NAME}</span>
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300 md:flex">
             <a href="#features">Features</a>
@@ -43,10 +44,10 @@ export function LandingPage() {
                 <Zap className="h-3.5 w-3.5" /> Real-time support operations
               </div>
               <h1 className="max-w-4xl text-5xl font-black leading-tight tracking-normal text-slate-950 dark:text-white sm:text-6xl lg:text-7xl">
-                SupportFlow AI
+                {PRODUCT_NAME}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
-                A polished customer support workspace with live chat, ticket ownership, analytics, secure roles, uploads, and local AI-style summaries.
+                An AI-powered customer support, CRM, and helpdesk workspace with live chat, ticket ownership, analytics, secure roles, uploads, and local AI assistance.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link to="/register"><Button className="px-5" icon={ArrowRight}>Create workspace</Button></Link>
@@ -101,7 +102,7 @@ export function LandingPage() {
 
         <section id="workflow" className="py-20">
           <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-3">
-            {["Customer starts a conversation", "SupportFlow assigns the best agent", "Admins monitor quality and velocity"].map((step, index) => (
+            {["Customer starts a support request", "SupaNova classifies and prioritizes it", "Teams resolve with CRM context and AI assistance"].map((step, index) => (
               <div key={step} className="flex gap-4">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-900 font-black text-white dark:bg-white dark:text-slate-950">{index + 1}</span>
                 <div>
@@ -136,13 +137,13 @@ export function LandingPage() {
             <CheckCircle2 className="mx-auto h-10 w-10 text-success" />
             <h2 className="mt-4 text-3xl font-black sm:text-4xl">Built like a startup product.</h2>
             <p className="mt-4 text-slate-600 dark:text-slate-400">Production architecture, polished UX states, scalable role flows, and deployment-ready docs.</p>
-            <Link className="mt-8 inline-block" to="/register"><Button icon={ArrowRight}>Launch SupportFlow AI</Button></Link>
+            <Link className="mt-8 inline-block" to="/register"><Button icon={ArrowRight}>Launch {PRODUCT_NAME}</Button></Link>
           </div>
         </section>
       </main>
 
       <footer className="border-t border-slate-200 py-8 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
-        SupportFlow AI. Real-time customer support, beautifully organized.
+        {PRODUCT_NAME}. AI-powered customer support, CRM, and helpdesk operations.
       </footer>
     </div>
   );

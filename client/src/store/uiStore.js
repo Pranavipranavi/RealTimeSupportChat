@@ -12,6 +12,6 @@ export const useUiStore = create(
       pushToast: (toast) => set((state) => ({ toasts: [...state.toasts, { id: crypto.randomUUID(), ...toast }] })),
       removeToast: (id) => set((state) => ({ toasts: state.toasts.filter((toast) => toast.id !== id) }))
     }),
-    { name: "supportflow-ui", partialize: (state) => ({ theme: state.theme }) }
+    { name: "supanova-ui", partialize: (state) => ({ theme: state.theme }) }
   )
 );

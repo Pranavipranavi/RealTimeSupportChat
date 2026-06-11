@@ -1,6 +1,8 @@
 import Joi from "joi";
+import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
 import { getAccessibleConversation } from "../utils/accessControl.js";
+import { classifyTicket, suggestReplies } from "../utils/aiEngine.js";
 import { notifyUsers } from "../utils/notifications.js";
 import { getPagination, paginationMeta } from "../utils/pagination.js";
 import { summarizeConversation } from "../utils/summarizer.js";
@@ -41,13 +43,25 @@ export async function createMessage(req, res, next) {
       conversation.firstResponseAt = new Date();
     }
     conversation.lastMessageAt = new Date();
+    const ai = classifyTicket(`${conversation.subject} ${req.body.content || ""}`);
+    conversation.priority = ai.priority === "urgent" ? "urgent" : conversation.priority;
+    conversation.suggestedReplies = suggestReplies({ category: conversation.category, priority: conversation.priority, subject: conversation.subject });
+    conversation.aiSignals = { sentiment: ai.sentiment, urgencyScore: ai.urgencyScore, reason: ai.reason };
     const recent = await Message.find({ conversationId: conversation._id }).sort({ timestamp: -1 }).limit(8);
     conversation.summary = summarizeConversation(recent.reverse());
     await conversation.save();
 
     const populated = await message.populate("senderId", "name email avatar role");
-    req.app.get("io")?.to(`conversation:${conversation._id}`).emit("message:new", populated);
-    await notifyUsers(req.app.get("io"), conversation.participants.filter((id) => String(id) !== String(req.user._id)), {
+    const updatedConversation = await Conversation.findById(conversation._id)
+      .populate("participants", "name email company customerStatus avatar role status lastSeenAt lastActivityAt")
+      .populate("assignedAgent", "name email company avatar role status lastSeenAt");
+    const io = req.app.get("io");
+    io?.to(`conversation:${conversation._id}`).emit("message:new", populated);
+    io?.to(`conversation:${conversation._id}`).emit("conversation:update", updatedConversation);
+    conversation.participants.forEach((id) => io?.to(`user:${id}`).emit("conversation:update", updatedConversation));
+    io?.to("role:admin").emit("conversation:update", updatedConversation);
+    io?.to("role:super_admin").emit("conversation:update", updatedConversation);
+    await notifyUsers(io, conversation.participants.filter((id) => String(id) !== String(req.user._id)), {
       type: "message",
       title: `New reply from ${req.user.name}`,
       body: populated.content || "Attachment received",

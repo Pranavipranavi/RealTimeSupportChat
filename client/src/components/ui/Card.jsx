@@ -1,8 +1,16 @@
+import { motion } from "framer-motion";
+
 export function Card({ children, className = "" }) {
   return (
-    <section className={`rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-dark-card ${className}`}>
+    <motion.section
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className={`rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-dark-card ${className}`}
+    >
       {children}
-    </section>
+    </motion.section>
   );
 }
 

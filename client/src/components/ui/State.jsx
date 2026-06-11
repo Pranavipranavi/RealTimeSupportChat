@@ -5,7 +5,7 @@ export function SkeletonList({ rows = 5 }) {
   return (
     <div className="space-y-3 p-4">
       {Array.from({ length: rows }).map((_, index) => (
-        <div key={index} className="h-16 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
+        <div key={index} className="skeleton-shimmer h-16 rounded-lg bg-slate-100 dark:bg-slate-800" />
       ))}
     </div>
   );

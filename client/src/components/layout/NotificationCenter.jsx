@@ -7,10 +7,11 @@ import { useAuthStore } from "../../store/authStore.js";
 import { formatDate } from "../../utils/format.js";
 import { Button } from "../ui/Button.jsx";
 import { EmptyState, SkeletonList } from "../ui/State.jsx";
+import { isAdminRole } from "../../utils/product.js";
 
 function notificationTarget(notification, role) {
   if (!notification.conversationId) return "#";
-  if (role === "admin") return `/admin/conversations/${notification.conversationId}`;
+  if (isAdminRole(role)) return `/admin/conversations/${notification.conversationId}`;
   if (role === "agent") return `/agent/chats/${notification.conversationId}`;
   return `/customer/chat/${notification.conversationId}`;
 }
@@ -41,15 +42,15 @@ export function NotificationCenter() {
     <div className="relative">
       <Button
         variant="secondary"
-        className="relative h-10 w-10 px-0"
+        className="relative h-12 w-12 px-0"
         aria-label="Notifications"
         onClick={() => {
           setOpen((value) => !value);
           requestBrowserNotifications();
         }}
       >
-        <Bell className="h-4 w-4" />
-        {unread ? <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-accent" /> : null}
+        <Bell className="h-5 w-5" />
+        {unread ? <span className="absolute right-2 top-2 h-3 w-3 rounded-full bg-accent ring-2 ring-white dark:ring-slate-950" /> : null}
       </Button>
       {open ? (
         <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-950">

@@ -1,8 +1,8 @@
 {
-  "name": "supportflow-ai",
+  "name": "supanova-ai",
   "version": "1.0.0",
   "private": true,
-  "description": "SupportFlow AI full-stack real-time customer support SaaS.",
+  "description": "SupaNova AI full-stack AI-powered customer support, CRM, and helpdesk SaaS.",
   "scripts": {
     "install:all": "npm install --prefix server && npm install --prefix client",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",

@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Activity, Clock, MessageSquare, Star, Ticket, Users } from "lucide-react";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { api } from "../../api/client.js";
 import { Card, CardHeader } from "../../components/ui/Card.jsx";
 import { ErrorState, SkeletonList } from "../../components/ui/State.jsx";
+import { useAuthStore } from "../../store/authStore.js";
 import { formatDuration } from "../../utils/format.js";
+import { isSuperAdminRole } from "../../utils/product.js";
 
 function Stat({ label, value, icon: Icon }) {
   return (
@@ -18,6 +21,8 @@ function Stat({ label, value, icon: Icon }) {
 }
 
 export function AdminDashboard({ expanded }) {
+  const user = useAuthStore((state) => state.user);
+  const isSuperAdmin = isSuperAdminRole(user?.role);
   const analyticsQuery = useQuery({
     queryKey: ["admin-analytics"],
     queryFn: () => api.get("/api/admin/analytics")
@@ -30,16 +35,47 @@ export function AdminDashboard({ expanded }) {
   const agents = analyticsQuery.data.agentPerformance;
   const stats = [
     ["Total users", totals.totalUsers, Users],
+    ["Total customers", totals.totalCustomers || 0, Users],
+    ["Total agents", totals.totalAgents || 0, Users],
     ["Active users", totals.activeUsers, Activity],
+    ["Online agents", totals.onlineAgents || 0, Activity],
     ["Messages today", totals.messagesToday, MessageSquare],
     ["Total conversations", totals.totalConversations, Ticket],
     ["Open tickets", totals.openTickets, Ticket],
-    ["Pending tickets", totals.pendingTickets, Clock],
+    ["Assigned", totals.assignedTickets, Clock],
+    ["In progress", totals.inProgressTickets, Clock],
+    ["Waiting", totals.waitingTickets, Clock],
     ["Resolved tickets", totals.resolvedTickets, Ticket],
     ["Closed tickets", totals.closedTickets, Ticket],
+    ["Resolution rate", `${totals.resolutionRate}%`, Star],
     ["Avg response", formatDuration(totals.averageResponseTimeMs), Clock],
-    ["CSAT", `${totals.customerSatisfaction}/5`, Star]
+    ["CSAT", `${totals.customerSatisfaction}/5`, Star],
+    ["Pending agents", totals.pendingAgents, Clock],
+    ["Rejected agents", totals.rejectedAgents, Users]
   ];
+  if (isSuperAdmin) {
+    stats.splice(stats.length - 2, 0, ["Recovery enabled", totals.securityRecoveryEnabled || 0, Users], ["Recovery missing", totals.securityRecoveryMissing || 0, Users]);
+  }
+  const ticketData = [
+    { name: "Open", tickets: totals.openTickets },
+    { name: "Assigned", tickets: totals.assignedTickets },
+    { name: "In Progress", tickets: totals.inProgressTickets },
+    { name: "Waiting", tickets: totals.waitingTickets },
+    { name: "Resolved", tickets: totals.resolvedTickets },
+    { name: "Closed", tickets: totals.closedTickets }
+  ];
+  const priorityData = [
+    { name: "Low", tickets: totals.priorityLow || 0 },
+    { name: "Normal", tickets: totals.priorityNormal || 0 },
+    { name: "High", tickets: totals.priorityHigh || 0 },
+    { name: "Urgent", tickets: totals.priorityUrgent || 0 }
+  ];
+  const performanceData = agents.map((item) => ({
+    name: item.agent.name.split(" ")[0],
+    conversations: item.conversations,
+    resolved: item.resolved,
+    open: item.open
+  }));
 
   return (
     <div className="grid gap-6">
@@ -50,8 +86,56 @@ export function AdminDashboard({ expanded }) {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {stats.map(([label, value, Icon]) => <Stat key={label} label={label} value={value} icon={Icon} />)}
       </div>
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Card>
+          <CardHeader title="Tickets by status" eyebrow="Workflow" />
+          <div className="h-80 p-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={ticketData}>
+                <defs>
+                  <linearGradient id="ticketGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.5} />
+                    <stop offset="95%" stopColor="#EC4899" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.25)" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Area type="monotone" dataKey="tickets" stroke="#3B82F6" fill="url(#ticketGradient)" strokeWidth={3} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+        <Card>
+          <CardHeader title="Tickets by priority" eyebrow="Quality signals" />
+          <div className="h-80 p-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={priorityData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.25)" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="tickets" fill="#EC4899" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      </div>
       <Card>
         <CardHeader title="Agent performance" eyebrow="Realtime quality" />
+        <div className="h-72 p-5">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={performanceData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.25)" />
+              <XAxis dataKey="name" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Bar dataKey="conversations" fill="#3B82F6" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="resolved" fill="#22C55E" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-900 dark:text-slate-400">
@@ -82,18 +166,22 @@ export function AdminDashboard({ expanded }) {
       {expanded ? (
         <Card>
           <CardHeader title="Ticket distribution" eyebrow="Analytics" />
-          <div className="grid gap-4 p-5 md:grid-cols-4">
-            {[
-              ["Open", totals.openTickets, "bg-primary"],
-              ["Pending", totals.pendingTickets, "bg-accent"],
-              ["Resolved", totals.resolvedTickets, "bg-success"],
-              ["Closed", totals.closedTickets, "bg-slate-400"]
-            ].map(([label, value, color]) => (
-              <div key={label}>
-                <div className="mb-2 flex justify-between text-sm font-bold"><span>{label}</span><span>{value}</span></div>
-                <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800"><div className={`h-2 rounded-full ${color}`} style={{ width: `${Math.min(100, (value / Math.max(totals.totalConversations, 1)) * 100)}%` }} /></div>
-              </div>
-            ))}
+          <div className="h-80 p-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={ticketData}>
+                <defs>
+                  <linearGradient id="ticketGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.5} />
+                    <stop offset="95%" stopColor="#EC4899" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.25)" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Area type="monotone" dataKey="tickets" stroke="#3B82F6" fill="url(#ticketGradient)" strokeWidth={3} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </Card>
       ) : null}

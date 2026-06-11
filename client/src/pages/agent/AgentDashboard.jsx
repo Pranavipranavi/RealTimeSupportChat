@@ -9,6 +9,7 @@ import { Input } from "../../components/ui/Input.jsx";
 import { formatDate } from "../../utils/format.js";
 import { useState } from "react";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue.js";
+import { ticketStatuses } from "../../utils/product.js";
 
 export function AgentDashboard() {
   const [filters, setFilters] = useState({ q: "", status: "" });
@@ -23,10 +24,10 @@ export function AgentDashboard() {
   return (
     <div className="grid gap-6">
       <div className="grid gap-4 md:grid-cols-4">
-        {["open", "pending", "resolved", "closed"].map((status) => (
-          <Card key={status} className="p-5">
-            <p className="text-sm font-semibold capitalize text-slate-500 dark:text-slate-400">{status}</p>
-            <p className="mt-2 text-3xl font-black">{conversations.filter((item) => item.status === status).length}</p>
+        {ticketStatuses.map((status) => (
+          <Card key={status.value} className="p-5">
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">{status.label}</p>
+            <p className="mt-2 text-3xl font-black">{conversations.filter((item) => item.status === status.value).length}</p>
           </Card>
         ))}
       </div>
@@ -39,10 +40,7 @@ export function AgentDashboard() {
               <div className="relative"><Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><Input className="w-56 pl-9" placeholder="Search" value={filters.q} onChange={(event) => setFilters({ ...filters, q: event.target.value })} /></div>
               <select className="focus-ring rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900" value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })}>
                 <option value="">All statuses</option>
-                <option value="open">Open</option>
-                <option value="pending">Pending</option>
-                <option value="resolved">Resolved</option>
-                <option value="closed">Closed</option>
+                {ticketStatuses.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
               </select>
             </div>
           }

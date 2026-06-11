@@ -2,11 +2,11 @@ import Conversation from "../models/Conversation.js";
 import User from "../models/User.js";
 
 export async function assignAgent() {
-  const agents = await User.find({ role: { $in: ["agent", "admin"] } }).select("_id status name");
+  const agents = await User.find({ role: "agent", approvalStatus: "approved", disabled: false }).select("_id status name");
   if (!agents.length) return null;
 
   const workloads = await Conversation.aggregate([
-    { $match: { status: { $in: ["open", "pending"] }, assignedAgent: { $ne: null } } },
+    { $match: { status: { $in: ["open", "assigned", "in_progress", "waiting_for_customer"] }, assignedAgent: { $ne: null } } },
     { $group: { _id: "$assignedAgent", count: { $sum: 1 } } }
   ]);
   const workloadMap = new Map(workloads.map((item) => [String(item._id), item.count]));

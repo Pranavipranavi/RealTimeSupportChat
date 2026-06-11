@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "./config/env.js";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -40,7 +40,7 @@ app.use("/uploads", express.static(path.join(__dirname, "..", "uploads"), {
 }));
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", service: "supportflow-ai", timestamp: new Date().toISOString() });
+  res.json({ status: "ok", service: "supanova-ai", timestamp: new Date().toISOString() });
 });
 
 app.use("/api/auth", authRoutes);

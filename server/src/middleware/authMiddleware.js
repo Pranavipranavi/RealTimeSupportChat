@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import { verifyToken } from "../utils/tokens.js";
+import { isAdminRole } from "../utils/roles.js";
 
 export async function protect(req, _res, next) {
   try {
@@ -18,6 +19,11 @@ export async function protect(req, _res, next) {
       error.statusCode = 401;
       throw error;
     }
+    if (user.disabled) {
+      const error = new Error("This account is disabled");
+      error.statusCode = 403;
+      throw error;
+    }
     req.user = user;
     next();
   } catch (error) {
@@ -28,8 +34,17 @@ export async function protect(req, _res, next) {
 
 export function allowRoles(...roles) {
   return (req, _res, next) => {
-    if (!roles.includes(req.user.role)) {
+    const allowed = roles.some((role) => {
+      if (role === "admin") return isAdminRole(req.user);
+      return req.user.role === role;
+    });
+    if (!allowed) {
       const error = new Error("You do not have permission to perform this action");
+      error.statusCode = 403;
+      return next(error);
+    }
+    if (req.user.role === "agent" && req.user.approvalStatus !== "approved") {
+      const error = new Error("Your support agent account is pending admin approval");
       error.statusCode = 403;
       return next(error);
     }

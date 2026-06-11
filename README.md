@@ -1,6 +1,6 @@
-# SupportFlow AI
+# SupaNova AI
 
-SupportFlow AI is a production-style, full-stack SaaS customer support platform for real-time chat, support workflows, and analytics.
+SupaNova AI is a production-style, full-stack AI-powered customer support, CRM, and helpdesk platform for real-time support operations, customer context, ticket workflows, and analytics.
 
 It includes:
 - JWT authentication and Google OAuth login
@@ -20,7 +20,7 @@ It includes:
 ## Repository Structure
 
 ```text
-supportflow-ai/
+supanova-ai/
 ├── client/             React frontend application
 │   ├── public/
 │   ├── src/
@@ -79,7 +79,7 @@ Update `server/.env` with your values:
 ```env
 NODE_ENV=development
 PORT=5000
-MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster.mongodb.net/supportflow_ai
+MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster.mongodb.net/supanova_ai
 JWT_SECRET=replace-with-a-long-random-secret
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
