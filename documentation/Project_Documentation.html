@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>SupaNova AI Project Report</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.65;
+            color: #1e293b;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #ffffff;
+        }
+
+        h1, h2, h3, h4 {
+            color: #0f172a;
+            font-weight: 700;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 8px;
+            color: #1e3a8a;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: #2563eb;
+        }
+
+        p {
+            margin-bottom: 1.25em;
+            font-size: 1.05rem;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5em;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+            font-size: 1.05rem;
+        }
+
+        strong {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        code {
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+            background-color: #f1f5f9;
+            color: #b91c1c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            font-size: 0.95em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2em;
+            margin-top: 1em;
+            font-size: 1rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #cbd5e1;
+            margin: 2.5em 0;
+        }
+
+        /* Cover Page Styling */
+        .cover-page {
+            height: 95vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+            margin-bottom: 100px;
+            page-break-after: always;
+        }
+
+        .cover-logo {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            letter-spacing: -0.05em;
+        }
+
+        .cover-subtitle {
+            font-size: 1.5rem;
+            color: #475569;
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+
+        .cover-details {
+            border-top: 2px solid #3b82f6;
+            padding-top: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .cover-details-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .cover-details-label {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .cover-details-value {
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        /* Print formatting */
+        @media print {
+            body {
+                padding: 0;
+            }
+            .cover-page {
+                box-shadow: none;
+                border: none;
+                height: 100%;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+<div class='cover-page'>
+  <div class='cover-logo'>SupaNova AI</div>
+  <div class='cover-subtitle'>Real-time Customer Support Helpdesk & Live Chat System</div>
+  <div class='cover-details'>
+    <div class='cover-details-row'><span class='cover-details-label'>Host Organization:</span><span class='cover-details-value'>Codtech IT Solutions</span></div>
+    <div class='cover-details-row'><span class='cover-details-label'>Intern Name:</span><span class='cover-details-value'>Naguru Suhas</span></div>
+    <div class='cover-details-row'><span class='cover-details-label'>Intern ID:</span><span class='cover-details-value'>CITS1993</span></div>
+    <div class='cover-details-row'><span class='cover-details-label'>Duration:</span><span class='cover-details-value'>8 Weeks</span></div>
+    <div class='cover-details-row'><span class='cover-details-label'>Submission Date:</span><span class='cover-details-value'>June 18, 2026</span></div>
+  </div>
+</div>
+<p><strong>Real-time Customer Support Helpdesk & Live Chat System</strong></p>
+<hr />
+<h2>1. Cover Page</h2>
+<ul>
+  <li><strong>Project Title:</strong> SupaNova AI: Real-time Customer Support Helpdesk & Live Chat System</li>
+  <li><strong>Host Organization:</strong> Codtech IT Solutions Private Limited</li>
+  <li><strong>Intern Name:</strong> Naguru Suhas</li>
+  <li><strong>Intern ID:</strong> CITS1993</li>
+  <li><strong>Duration:</strong> 8 Weeks (April - June 2026)</li>
+  <li><strong>Date of Submission:</strong> June 18, 2026</li>
+</ul>
+<hr />
+<h2>2. Internship Details</h2>
+<ul>
+  <li><strong>Internship Track:</strong> Full-Stack Web Development (Node.js & React)</li>
+  <li><strong>Intern ID:</strong> CITS1993</li>
+  <li><strong>Name:</strong> Naguru Suhas</li>
+  <li><strong>Duration:</strong> 8 Weeks</li>
+  <li><strong>Reporting Authority:</strong> Internship Division, Codtech IT Solutions Private Limited</li>
+</ul>
+<hr />
+<h2>3. Organization Details</h2>
+<ul>
+  <li><strong>Company Name:</strong> Codtech IT Solutions Private Limited</li>
+  <li><strong>Nature of Business:</strong> Information Technology Consulting, Software Development, Training, and Skill Enhancement Services.</li>
+  <li><strong>Mission:</strong> Bridging the gap between academic theory and practical corporate software development standard frameworks.</li>
+</ul>
+<hr />
+<h2>4. Project Abstract</h2>
+<p>SupaNova AI is a modern, responsive, full-stack customer support helpdesk and live chat platform. Built using the MERN stack (MongoDB, Express, React, Node.js), it integrates real-time communications via Socket.IO, automated ticket lifecycle routing, and a multi-tiered Role-Based Access Control (RBAC) mechanism. SupaNova AI streamlines the interface between customer support request submissions, live support agents, operational admins, and super admins. The system supports typing indicators, reading receipts, file attachments, conversation summarization, and automated ticket categorization.</p>
+<hr />
+<h2>5. Problem Statement</h2>
+<p>Traditional customer support systems struggle to deliver immediate, real-time feedback, leaving customers in long, opaque email ticketing queues. Furthermore, legacy helpdesks lack a clear, secure division of labor between customer-facing conversations, agent assignment lists, database operations auditing, and system configuration rules. SupaNova AI resolves these operational bottlenecks by providing immediate real-time messaging, automated routing, and role-based operational dashboards.</p>
+<hr />
+<h2>6. Project Objectives</h2>
+<ul>
+  <li><strong>Real-time Synchronization:</strong> Build a bi-directional communication channel using Socket.IO to enable zero-latency messaging.</li>
+  <li><strong>Granular RBAC Enforcements:</strong> Create secure barriers isolating Super Admins, Admins, Agents, and Customers.</li>
+  <li><strong>Context Preservation:</strong> Provide conversation history search, file attachment support, and ratings feedback.</li>
+  <li><strong>Operational Auditing:</strong> Log every system configuration change, role modification, or ticket status update.</li>
+  <li><strong>Production Readiness:</strong> Optimize build artifacts for fast load times and deploy to cloud platforms (Vercel & Render).</li>
+</ul>
+<hr />
+<h2>7. Technology Stack</h2>
+<ul>
+  <li><strong>Frontend Core:</strong> React, Vite (fast HMR), Tailwind CSS (sleek user interfaces), Framer Motion (micro-animations).</li>
+  <li><strong>State Management:</strong> Zustand (lightweight client state), TanStack Query / React Query (caching and syncing).</li>
+  <li><strong>Backend Core:</strong> Node.js, Express.js (REST API server).</li>
+  <li><strong>Real-time Engine:</strong> Socket.IO / socket.io-client (persistent WebSocket sessions).</li>
+  <li><strong>Database & ODM:</strong> MongoDB Atlas, Mongoose (Object Document Mapping).</li>
+  <li><strong>Security & Auth:</strong> JSON Web Tokens (JWT), BcryptJS, Express Rate Limiter, Helmet, CORS.</li>
+  <li><strong>Testing & Tools:</strong> Node native runner, Supertest, MongoDB Memory Server.</li>
+</ul>
+<hr />
+<h2>8. System Architecture</h2>
+<p>SupaNova AI implements a multi-tier client-server architecture:</p>
+<p>1. <strong>Presentation Layer (React Client):</strong> Responsible for routing, auth store hydration, and rendering.</p>
+<p>2. <strong>Gateway/Security Layer:</strong> Intercepts REST requests for rate-limiting, CORS validation, and XSS sanitization.</p>
+<p>3. <strong>Application Layer (Express / Socket.IO Server):</strong> Runs the business logic and triggers real-time events.</p>
+<p>4. <strong>Data Layer (MongoDB Atlas Cluster):</strong> Persists data schemas with Mongoose ODM enforcement.</p>
+<hr />
+<h2>9. Folder Structure</h2>
+<p><code></code>`text</p>
+<p>supanova-ai/</p>
+<p>├── client/                 # React frontend</p>
+<p>│   ├── public/             # Static files</p>
+<p>│   ├── src/</p>
+<p>│   │   ├── api/            # API client config (Axios instance)</p>
+<p>│   │   ├── components/     # AppShell and ui components</p>
+<p>│   │   ├── hooks/          # Custom react hooks</p>
+<p>│   │   ├── pages/          # Auth, Dashboards, ChatPage, Profile</p>
+<p>│   │   ├── store/          # Zustand store definitions</p>
+<p>│   │   └── utils/          # Formatting helpers</p>
+<p>│   ├── package.json</p>
+<p>│   └── tailwind.config.js</p>
+<p>├── server/                 # Express backend</p>
+<p>│   ├── src/</p>
+<p>│   │   ├── config/         # Database and middleware configs</p>
+<p>│   │   ├── controllers/    # API endpoints handlers</p>
+<p>│   │   ├── middleware/     # Auth checks, error handling, validation</p>
+<p>│   │   ├── models/         # Mongoose collection models</p>
+<p>│   │   ├── routes/         # Express routing definitions</p>
+<p>│   │   ├── scripts/        # Seeding and admin creation scripts</p>
+<p>│   │   ├── socket/         # WebSocket handlers</p>
+<p>│   │   └── utils/          # Role helper utilities</p>
+<p>│   ├── tests/              # Automated integration tests</p>
+<p>│   └── package.json</p>
+<p><code></code>`</p>
+<hr />
+<h2>10. Database Design</h2>
+<p>The application utilizes six primary MongoDB collections:</p>
+<ul>
+  <li><strong>Users:</strong> Stores account profiles, hashed passwords, roles (<code>customer</code>, <code>agent</code>, <code>admin</code>, <code>super_admin</code>), and verification states.</li>
+  <li><strong>Conversations:</strong> Represents support tickets. Tracks category, status, priority, participants, and assigned agents.</li>
+  <li><strong>Messages:</strong> Stores conversation chat histories. Contains sender ID, attachment links, read indicators, and reactions.</li>
+  <li><strong>Ratings:</strong> Customer satisfaction ratings and feedback.</li>
+  <li><strong>Notifications:</strong> System alerts, workflow status changes, or ticket assignment notifications.</li>
+  <li><strong>AuditLogs:</strong> Security logging tracking administrator changes.</li>
+</ul>
+<hr />
+<h2>11. API Design</h2>
+<ul>
+  <li><strong><code>POST /api/auth/register</code></strong> — Registers a customer or agent.</li>
+  <li><strong><code>POST /api/auth/login</code></strong> — Authenticates a user and returns a JWT token.</li>
+  <li><strong><code>POST /api/auth/forgot-password</code></strong> — Initiates password reset via security question validation.</li>
+  <li><strong><code>GET /api/conversations</code></strong> — Fetches filtered tickets based on user role.</li>
+  <li><strong><code>POST /api/conversations</code></strong> — Submits a new ticket with automatic local classification.</li>
+  <li><strong><code>PATCH /api/conversations/:id/status</code></strong> — Updates ticket status (agents/admins only).</li>
+  <li><strong><code>POST /api/messages/:conversationId</code></strong> — Sends a message, supporting multipart uploads (files).</li>
+  <li><strong><code>GET /api/admin/analytics</code></strong> — Aggregates ticket statuses, response times, and CSAT scores (admins/super_admins only).</li>
+  <li><strong><code>PATCH /api/admin/users/:id/role</code></strong> — Restructures user roles (super_admin only).</li>
+</ul>
+<hr />
+<h2>12. Socket.IO Architecture</h2>
+<p>Real-time messaging is handled by a Socket.IO connection authenticated with JWT. Communication is compartmentalized into:</p>
+<ul>
+  <li><strong>Connection Lifecycle:</strong> Verification of token on handshake, binding user to individual socket room.</li>
+  <li><strong>Room Scope:</strong> Users join explicit room channels (<code>conversationId</code>) to prevent message leakage.</li>
+  <li><strong>Event Dispatch:</strong> Typing signals (<code>typing:start</code>/<code>typing:stop</code>) and messages (<code>message:send</code>/<code>message:new</code>) are dispatched with low latency.</li>
+</ul>
+<hr />
+<h2>13. Authentication Flow</h2>
+<p>1. <strong>Register:</strong> User inputs email, name, password, role, and chooses a security question.</p>
+<p>2. <strong>Login:</strong> User credentials verified via Bcrypt hashing comparison. Success yields a JWT signed with a server secret.</p>
+<p>3. <strong>Hydration:</strong> Client stores JWT in <code>localStorage</code> (session persistence) and appends it to subsequent request headers.</p>
+<p>4. <strong>Recovery:</strong> Forgotten passwords can be reset locally by answering the chosen security question.</p>
+<hr />
+<h2>14. RBAC Architecture</h2>
+<p>Access is checked in the backend middleware layer (<code>authMiddleware.js</code>) and frontend route wrapper (<code>ProtectedRoute.jsx</code>).</p>
+<ul>
+  <li><strong>Customer:</strong> Access restricted to their tickets only.</li>
+  <li><strong>Agent:</strong> Access to assigned tickets, ticket status transitions.</li>
+  <li><strong>Admin:</strong> View-all access, conversation monitoring, read-only analytics.</li>
+  <li><strong>Super Admin:</strong> Exclusive rights to execute agent approvals, modify user roles, reassign tickets, and inspect system audit logs.</li>
+</ul>
+<hr />
+<h2>15. User Roles</h2>
+<p>1. <strong>Customer:</strong> Registers, creates tickets, chats, uploads attachments, and rates support.</p>
+<p>2. <strong>Agent:</strong> Receives ticket notifications, updates ticket statuses, and exchanges messages.</p>
+<p>3. <strong>Admin:</strong> Monitors conversations, analyzes performance metrics, manages users.</p>
+<p>4. <strong>Super Admin:</strong> Core manager role enforcing system configurations and permissions.</p>
+<hr />
+<h2>16. Features</h2>
+<ul>
+  <li><strong>Real-time Messaging:</strong> Fast Socket.IO messaging with read checks and reactions.</li>
+  <li><strong>Auto-Routing:</strong> Automated ticket classification (technical, billing, sales, etc.) based on keywords.</li>
+  <li><strong>Role-based Dashboards:</strong> Sleek, custom interfaces built for each user type.</li>
+  <li><strong>Security Setup:</strong> Recovery mechanisms and JWT validation.</li>
+  <li><strong>Dark Mode & Responsive:</strong> Custom theme configuration, responsive CSS design.</li>
+</ul>
+<hr />
+<h2>17. Screenshots</h2>
+<p>*(Note: These refer to the images that will be placed in the <code>screenshots/</code> directory)*</p>
+<ul>
+  <li><strong>Landing Page:</strong> <code>screenshots/01_landing_page.png</code></li>
+  <li><strong>Customer Chat Console:</strong> <code>screenshots/05_customer_chat.png</code></li>
+  <li><strong>Agent Dashboard:</strong> <code>screenshots/07_agent_dashboard.png</code></li>
+  <li><strong>Admin Analytics Panel:</strong> <code>screenshots/14_analytics_dashboard.png</code></li>
+</ul>
+<hr />
+<h2>18. Deployment Architecture</h2>
+<ul>
+  <li><strong>Frontend:</strong> Hosted on Vercel as static Vite assets, served via edge CDNs.</li>
+  <li><strong>Backend:</strong> Express API and Socket.IO server running on Render PaaS.</li>
+  <li><strong>Database:</strong> MongoDB Atlas multi-region cluster.</li>
+</ul>
+<hr />
+<h2>19. Testing Results</h2>
+<ul>
+  <li><strong>Method:</strong> Integration test suite containing assertions for auth, RBAC, workflows, and Socket.IO.</li>
+  <li><strong>Result:</strong> <strong>100% Pass Rate</strong> (6 / 6 Test Suites passed).</li>
+  <li><strong>Average Latency:</strong> 26 seconds total run duration.</li>
+</ul>
+<hr />
+<h2>20. Challenges Faced</h2>
+<ul>
+  <li><strong>WebSocket CORS Configuration:</strong> Mismatched origins between local client/server and production domains. Resolved by implementing dynamic, environment-sensitive origin check utilities.</li>
+  <li><strong>Atlas Server Sleep:</strong> Free-tier database and backend cold-starts. Handled by building robust loading screen transitions and error boundary retries in the React application layer.</li>
+</ul>
+<hr />
+<h2>21. Future Enhancements</h2>
+<ul>
+  <li><strong>AI Chatbot Agent:</strong> Incorporate OpenAI or Gemini APIs to automatically respond to tickets before agent routing.</li>
+  <li><strong>SLA Breach Warnings:</strong> Alert admins if a ticket remains open without agent activity for more than 24 hours.</li>
+</ul>
+<hr />
+<h2>22. Conclusion</h2>
+<p>SupaNova AI demonstrates how full-stack development, WebSocket integrations, and structured RBAC boundaries can be combined into a robust customer support product. Under Codtech IT Solutions, the project was successfully completed, validated, and documented.</p>
+</body>
+</html>
