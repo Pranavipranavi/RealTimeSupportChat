@@ -1,7 +1,7 @@
 # Deployment Guide
 **Project:** Real-time Support Chat (SupaNova AI)  
 **Organization:** Codtech IT Solutions Private Limited  
-**Intern:** Naguru Suhas (ID: CITS1993)  
+**Intern:** Sai Pranavi (ID: CITS1983)  
 
 This guide provides step-by-step instructions for running the application locally, provisioning dependencies, deploying the production build to cloud platforms (Render and Vercel), and resolving common environment issues.
 
@@ -17,7 +17,7 @@ This guide provides step-by-step instructions for running the application locall
 ### Steps
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/sunnysuhas/Real-time-Support-Chat.git
+   git clone https://github.com/Pranavipranavi/Real-time-Support-Chat.git
    cd Real-time-Support-Chat
    ```
 
