@@ -1,7 +1,7 @@
 # Audit Report: Internship-Submission Readiness
 **Project:** Real-time Support Chat (SupaNova AI)  
 **Organization:** Codtech IT Solutions Private Limited  
-**Intern:** Naguru Suhas (ID: CITS1993)  
+**Intern:** Sai Pranavi (ID: CITS1983)  
 **Duration:** 8 Weeks  
 
 ---
