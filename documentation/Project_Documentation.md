@@ -7,8 +7,8 @@
 
 * **Project Title:** SupaNova AI: Real-time Customer Support Helpdesk & Live Chat System
 * **Host Organization:** Codtech IT Solutions Private Limited
-* **Intern Name:** Naguru Suhas
-* **Intern ID:** CITS1993
+* **Intern Name:** Sai Pranavi
+* **Intern ID:** CITS1983
 * **Duration:** 8 Weeks (April - June 2026)
 * **Date of Submission:** June 18, 2026
 
@@ -17,8 +17,8 @@
 ## 2. Internship Details
 
 * **Internship Track:** Full-Stack Web Development (Node.js & React)
-* **Intern ID:** CITS1993
-* **Name:** Naguru Suhas
+* **Intern ID:** CITS1983
+* **Name:** Sai Pranavi
 * **Duration:** 8 Weeks
 * **Reporting Authority:** Internship Division, Codtech IT Solutions Private Limited
 
