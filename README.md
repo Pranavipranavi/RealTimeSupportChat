@@ -10,8 +10,8 @@ A production-grade, full-stack AI-powered customer support helpdesk, CRM, and li
 Bridging the gap between academic theory and industry-standard production development systems.
 
 ### Intern Details
-* **Full Name:** Naguru Suhas
-* **Intern ID:** CITS1993
+* **Full Name:** Sai Pranavi
+* **Intern ID:** CITS1983
 * **Duration:** 8 Weeks (April - June 2026)
 * **Project Name:** Real-time Support Chat (SupaNova AI)
 * **Submission Date:** June 18, 2026
