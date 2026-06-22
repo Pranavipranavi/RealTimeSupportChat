@@ -1,7 +1,7 @@
 # Test Report
 **Project:** Real-time Support Chat (SupaNova AI)  
 **Organization:** Codtech IT Solutions Private Limited  
-**Intern:** Naguru Suhas (ID: CITS1993)  
+**Intern:** Sai Pranavi (ID: CITS1983)  
 
 This report documents the verification and test execution of the SupaNova AI core endpoints, Role-Based Access Control boundaries, Socket.IO channels, and ticket workflows. Testing was conducted using automated integration test suites and manual health validations.
 
